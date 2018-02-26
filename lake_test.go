@@ -22,8 +22,8 @@ func TestAppend(t *testing.T) {
 
 	err = l.Append(Record{
 		UID:       id.String(),
-		Blob:      []byte("ffff"),
-		Metadata:  `{"hello": 12}`,
+		Blob:      []byte("[1,2,3,4]"),
+		Metadata:  map[string]string{"creator": "KL"},
 		Namespace: ns,
 	})
 

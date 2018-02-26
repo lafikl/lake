@@ -81,15 +81,15 @@ func (l *Lake) GetRecords(namespace string) ([]Record, error) {
 		if err := rows.Scan(
 			&rec.ID,
 			&rec.UID,
+			&rec.Namespace,
 			&buf,
-			&rec.Metadata,
 			&rec.Blob); err != nil {
 			return records, err
 		}
 
 		// parse metadata bytearray
 		kv := map[string]string{}
-		err = json.Unmarshal(buf, kv)
+		err = json.Unmarshal(buf, &kv)
 		if err != nil {
 			return records, err
 		}
@@ -113,14 +113,24 @@ func (l *Lake) GetRecord(uid []byte) (Record, error) {
 		return rec, err
 	}
 
+	buf := []byte{}
+
 	if err := rows.Scan(
 		&rec.ID,
 		&rec.UID,
 		&rec.Namespace,
-		&rec.Metadata,
+		&buf,
 		&rec.Blob); err != nil {
 		return rec, err
 	}
+
+	// parse metadata bytearray
+	kv := map[string]string{}
+	err = json.Unmarshal(buf, &kv)
+	if err != nil {
+		return rec, err
+	}
+	rec.Metadata = kv
 
 	return rec, nil
 }
